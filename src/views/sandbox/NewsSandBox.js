@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Switch, Route, Redirect } from 'react-router-dom'
 import SideMenu from '../../components/newssandbox/SideMenu'
 import TopHeader from '../../components/newssandbox/TopHeader'
@@ -14,14 +14,16 @@ import './NewsSandBox.css'
 import { Layout } from 'antd'
 const { Content } = Layout;
 
-
-
 export default function NewsSandBox () {
+    const [title, setTitle] = useState('')
+    const handleChangeTitle = (e) => {
+        setTitle(e)
+    }
     return (
         <Layout>
-            <SideMenu></SideMenu>
+            <SideMenu changetitle={handleChangeTitle}></SideMenu>
             <Layout>
-                <TopHeader></TopHeader>
+                <TopHeader title={title}></TopHeader>
                 <Content
                     className="site-layout-background"
                     style={{
@@ -40,10 +42,7 @@ export default function NewsSandBox () {
                         <Route path='*' component={NoPermission}></Route>
                     </Switch>
                 </Content>
-
-
             </Layout>
-
         </Layout>
     )
 }

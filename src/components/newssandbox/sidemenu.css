@@ -1,0 +1,17 @@
+.sider{
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+.sidemenu-bottom{
+    flex:1;
+    overflow: auto;
+}
+.sidemenu-bottom::-webkit-scrollbar{
+    width:5px;
+    height:5px;
+  }
+  .sidemenu-bottom::-webkit-scrollbar-thumb{
+    background: #1890ff;
+    border-radius:10px;
+  }

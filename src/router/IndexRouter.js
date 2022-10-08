@@ -13,7 +13,6 @@ export default function IndexRouter () {
                     localStorage.getItem('name') ? <NewsSandBox> </NewsSandBox> : <Redirect to="/login"></Redirect>
                 }></Route>
             </Switch>
-
         </HashRouter>
     )
 }

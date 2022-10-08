@@ -39,12 +39,11 @@ const menu = () => {
 }
 
 
-export default function TopHeader () {
+export default function TopHeader (props) {
     const [collapsed, setCollapsed] = useState(false);
     function handleFold () {
         setCollapsed(!collapsed)
     }
-
     return (
         <Header
             className="site-layout-background"
@@ -59,7 +58,7 @@ export default function TopHeader () {
                     handleFold()
                 } ></MenuFoldOutlined>
             }
-            <span className='shouye-ziti'>首页</span>
+            <span className='shouye-ziti'>{props.title || '首页'}</span>
             <div className='welcome'>
                 <span className='shouye-ziti welcome-back'>欢迎Admin回来</span>
                 {/* <Dropdown overlay={menu}>
