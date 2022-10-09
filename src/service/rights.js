@@ -24,4 +24,4 @@ export function patchRight (data) {
 // 编辑权限:grade=2
 export function patchChildren (data) {
     return axios.patch(`http://localhost:5000/children/${data.id}`, { pagepermisson: data.pagepermisson })
-}
+} 

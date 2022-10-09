@@ -59,6 +59,14 @@ export default function RightList () {
         });
         setDataSource(res.data)
     }
+    // function getRights () {
+    //     getSideMenu().then(res => {
+    //         res.data.forEach(v => {
+    //             (v?.children.length === 0) && (v.children = '')
+    //         });
+    //         setDataSource(res.data)
+    //     })
+    // }
     // 操作：编辑权限
     const handleChangeSwitch = (item) => {
         item.pagepermisson = item.pagepermisson === 1 ? 0 : 1

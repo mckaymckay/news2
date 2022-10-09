@@ -29,23 +29,21 @@ function SideMenu (props) {
     useEffect(() => {
         getSideMenu().then(res => {
             setMenu(res.data)
-            // console.log(32, res.data, selectKey[0])
-            const title = res.data.filter(item => {
-                if (item.key === selectKey[0]) return item;
+            console.log(32, res.data, selectKey[0])
+            let title = {}
+            res.data.forEach(item => {
+                if (item.key === selectKey[0]) {
+                    title = item
+                }
                 if (item.children.length > 0) {
-                    const hhh = item.children.filter(subitem => {
+                    item.children.forEach(subitem => {
                         if (subitem.key === selectKey[0]) {
-                            // console.log(subitem)
-                            return subitem
+                            title = subitem
                         }
                     })
-                    return hhh
                 }
-                //  item.children.filter(subItem => subItem.key === selectKey[0])
-            }
-
-            )
-            // console.log(36, title)
+            })
+            props.changetitle(title.title)
         })
     }, [])
     return (

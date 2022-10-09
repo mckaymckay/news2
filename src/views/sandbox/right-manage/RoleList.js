@@ -1,14 +1,20 @@
 import React, { useEffect, useState } from 'react'
-import { Table, Space, Popconfirm, Button, Popover, Tree } from 'antd'
-import { getRoles } from '../../../service/roles'
+import { Table, Space, Popconfirm, Button, Popover, Tree, message, Modal } from 'antd'
+import { getRolesLists, deleteRoles, updateRoles } from '../../../service/roles'
+import { getSideMenu } from '../../../service/rights'
 import { DeleteOutlined, ProfileOutlined } from '@ant-design/icons';
 
 // 操作：删除成功
-const handleConfirm = (e) => {
-    console.log(e);
+const handleDeleteConfirm = (e) => {
+    deleteRoles(e.item).then(res => {
+        if (res.status === 200) {
+            e.getRoles()
+            message.success('已成功删除！');
+        }
+    })
 };
 // 操作：删除失败
-const handleCancel = (e) => {
+const handleDeleteCancel = (e) => {
     console.log(e)
 };
 const columns = [
@@ -16,7 +22,7 @@ const columns = [
         title: 'ID',
         dataIndex: 'id',
         render: (id) => {
-            return <div style={{ 'fontWeight': 'bold' }}>{id}</div>
+            return <b>{id}</b>
         }
     },
     {
@@ -24,77 +30,57 @@ const columns = [
         dataIndex: 'roleName',
     },
 ];
-const treeData = [
-    {
-        title: '0-0',
-        key: '0-0',
-        children: [
-            {
-                title: '0-0-0',
-                key: '0-0-0',
-                children: [
-                    {
-                        title: '0-0-0-0',
-                        key: '0-0-0-0',
-                    },
-                    {
-                        title: '0-0-0-1',
-                        key: '0-0-0-1',
-                    }
-                ],
-            },
-            {
-                title: '0-0-2',
-                key: '0-0-2',
-            },
-        ],
-    },
-    {
-        title: '0-1',
-        key: '0-1',
-        children: [
-            {
-                title: '0-1-0-0',
-                key: '0-1-0-0',
-            }
-        ],
-    },
-    {
-        title: '0-2',
-        key: '0-2',
-    },
-];
-
 
 export default function RoleList () {
-    const [dataSource, setDataSource] = useState([])
-    const [expandedKeys, setExpandedKeys] = useState(['0-0-0', '0-0-1']);
-    const [checkedKeys, setCheckedKeys] = useState(['0-0-0']);
-    const [selectedKeys, setSelectedKeys] = useState([]);
-    const [autoExpandParent, setAutoExpandParent] = useState(true);
-    useEffect(() => {
-        getRoles().then(res => {
-            console.log(res.data)
-            setDataSource(res.data)
+    const [roleLists, setRoleLists] = useState([])
+    const [rightList, setRightLists] = useState([])
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [checkedKeys, setCheckedKeys] = useState([]);
+    const [currentId, setCurrentId] = useState(0)
+    //  modal弹出框显隐
+    const showModal = (item) => {
+        setCurrentId(item?.id)
+        setCheckedKeys(item?.rights)
+        setIsModalOpen(true);
+    };
+    // modal弹出框：确定
+    const handleEditOk = () => {
+        setIsModalOpen(false);
+        const params = {
+            id: currentId,
+            checkedKeys: checkedKeys.checked
+        }
+        console.log(params)
+        updateRoles(params).then(res => {
+            res.status === 200 && getRoles()
         })
-    }, [])
-    const onExpand = (expandedKeysValue) => {
-        console.log('onExpand', expandedKeysValue); // if not set autoExpandParent to false, if children expanded, parent can not collapse.
-        // or, you can remove all expanded children keys.
-
-        setExpandedKeys(expandedKeysValue);
-        setAutoExpandParent(false);
+    };
+    // modal弹出框：取消
+    const handleEditCancel = () => {
+        setIsModalOpen(false);
     };
 
+    // tree：处理选中
     const onCheck = (checkedKeysValue) => {
-        console.log('onCheck', checkedKeysValue);
-        setCheckedKeys(checkedKeysValue);
+        setCheckedKeys(checkedKeysValue); // 受控
     };
 
-    const onSelect = (selectedKeysValue, info) => {
-        console.log('onSelect', info);
-        setSelectedKeys(selectedKeysValue);
-    };
+    // 请求接口，获取角色列表
+    function getRoles () {
+        getRolesLists().then(res => {
+            setRoleLists(res.data)
+        })
+    }
+    // 请求接口，获取权限列表
+    function getRights () {
+        getSideMenu().then(res => {
+            setRightLists(res.data)
+        })
+    }
+    useEffect(() => {
+        getRoles()
+        getRights()
+    }, [])
 
     const operation = [{
         title: '操作',
@@ -103,38 +89,32 @@ export default function RoleList () {
                 {/* 删除 */}
                 <Popconfirm
                     title="确定删除该角色吗？"
-                    onConfirm={() => handleConfirm(item)}
-                    onCancel={() => handleCancel(item)}
+                    onConfirm={() => handleDeleteConfirm({ item, getRoles })}
+                    onCancel={() => handleDeleteCancel(item)}
                     okText="确定"
                     cancelText="取消"
                 >
                     <Button danger shape="circle" icon={<DeleteOutlined />} />
                 </Popconfirm>
                 {/* 编辑 */}
-                <Popover
-                    content={
-                        <Tree
-                            checkable
-                            onExpand={onExpand}
-                            expandedKeys={expandedKeys}
-                            autoExpandParent={autoExpandParent}
-                            onCheck={onCheck}
-                            checkedKeys={checkedKeys}
-                            onSelect={onSelect}
-                            selectedKeys={selectedKeys}
-                            treeData={treeData}
-                        />}
-                    title="角色列表"
-                    placement="left"
-                    trigger="click"
-                >
-                    <Button type="primary" shape="circle" icon={<ProfileOutlined />} />
-                </Popover>
-
+                <Button type="primary" shape="circle" onClick={() => showModal(item)} icon={<ProfileOutlined />} />
             </Space>
         }
     }]
     return (
-        <Table dataSource={dataSource} columns={columns.concat(operation)} />
+        <div>
+            {/*  todo:rowkey */}
+            <Table dataSource={roleLists} columns={columns.concat(operation)} rowKey={item => item.id} />
+            <Modal title="权限分配" open={isModalOpen} onOk={handleEditOk} onCancel={handleEditCancel}>
+                <Tree
+                    checkable
+                    checkStrictly={true}
+                    onCheck={onCheck} // 选中
+                    checkedKeys={checkedKeys}
+                    treeData={rightList}
+                />
+            </Modal>
+        </div>
+
     )
 }
