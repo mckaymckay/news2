@@ -49,7 +49,7 @@ const columns = [
     {
         title: '用户状态',
         render: (item) => {
-            return <Switch defaultChecked onChange={onChange} disabled={item.default} checked={item.roleState} />
+            return <Switch onChange={onChange} disabled={item.default} checked={item.roleState} />
         }
     },
     {
@@ -80,9 +80,9 @@ const columns = [
     },
 ];
 const handleChange = (value) => {
-    console.log(111);
+    console.log(83, value);
 };
-const CollectionCreateForm = ({ open, onCreate, onCancel }) => {
+const CollectionCreateForm = ({ open, onCreate, onCancel, regions, roles }) => {
     const [form] = Form.useForm();
     return (
         <Modal
@@ -146,9 +146,7 @@ const CollectionCreateForm = ({ open, onCreate, onCancel }) => {
                     <Select
                         onChange={handleChange}
                     >
-                        <Option value="jack">Jack</Option>
-                        <Option value="lucy">Lucy</Option>
-                        <Option value="Yiminghe">yiminghe</Option>
+                        {regions.map(v => <Option value={v} key={v}>{v}</Option>)}
                     </Select>
                 </Form.Item>
                 <Form.Item
@@ -163,9 +161,7 @@ const CollectionCreateForm = ({ open, onCreate, onCancel }) => {
                     <Select
                         onChange={handleChange}
                     >
-                        <Option value="jack">Jack</Option>
-                        <Option value="lucy">Lucy</Option>
-                        <Option value="Yiminghe">yiminghe</Option>
+                        {roles.map(v => <Option value={v} key={v}>{v}</Option>)}
                     </Select>
                 </Form.Item>
             </Form>
@@ -187,20 +183,18 @@ export default function UserList () {
     };
     function getUsers () {
         getUsersList().then(res => {
-            console.log(res)
+            console.log(res.data)
             setUsersList(res.data)
         })
     }
     useEffect(() => {
         getUsers()
         getAllRoles().then(res => {
-            console.log(193, res.data)
-            const roles = res.data.map(v => v.roleName)
+            setRoleList(res.data.map(v => v.roleName))
 
         })
         getAllRegions().then(res => {
-            console.log(194, res.data)
-            const roles = res.data.map(v => v.value)
+            setRegionList(res.data.map(v => v.value))
         })
     }, [])
     return (
@@ -213,6 +207,8 @@ export default function UserList () {
             }} />
             <CollectionCreateForm
                 open={isopen}
+                regions={regionList}
+                roles={roleList}
                 onCreate={onCreate}
                 onCancel={() => {
                     setIsOpen(false);

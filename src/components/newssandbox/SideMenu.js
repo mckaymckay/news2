@@ -29,7 +29,7 @@ function SideMenu (props) {
     useEffect(() => {
         getSideMenu().then(res => {
             setMenu(res.data)
-            console.log(32, res.data, selectKey[0])
+            // console.log(32, res.data, selectKey[0])
             let title = {}
             res.data.forEach(item => {
                 if (item.key === selectKey[0]) {
