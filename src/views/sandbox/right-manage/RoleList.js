@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Table, Space, Popconfirm, Button, Popover, Tree, message, Modal } from 'antd'
+import { Table, Space, Popconfirm, Button, Tree, message, Modal } from 'antd'
 import { getRolesLists, deleteRoles, updateRoles } from '../../../service/roles'
 import { getSideMenu } from '../../../service/rights'
 import { DeleteOutlined, ProfileOutlined } from '@ant-design/icons';

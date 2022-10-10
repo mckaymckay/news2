@@ -3,8 +3,7 @@ import { Table, Tag, Button, Space, message, Popconfirm, Popover, Switch } from 
 import { useEffect, useState } from 'react';
 import { getSideMenu, deleteRight, deleteChildren, patchRight, patchChildren } from '../../../service/rights';
 import './RightList.css'
-import styles from './RightList.css'
-console.log(styles)
+// import styles from './RightList.css'
 // 操作：删除成功
 const handleConfirm = (e) => {
     console.log(e);
@@ -45,7 +44,7 @@ const columns = [
         title: '权限路径',
         dataIndex: 'key',
         render: (key) => {
-            return <Tag color={'green'}>
+            return <Tag color="green">
                 {key}
             </Tag>
         }
@@ -58,7 +57,9 @@ export default function RightList () {
     async function getRights () {
         const res = await getSideMenu()
         res.data.forEach(v => {
-            (v?.children.length === 0) && (v.children = '')
+            if (v?.children.length === 0) {
+                v.children = ''
+            }
         });
         setDataSource(res.data)
     }
@@ -71,17 +72,26 @@ export default function RightList () {
     //     })
     // }
     // 操作：编辑权限
-    const handleChangeSwitch = (item) => {
+    const handleChangeSwitch = async (item) => {
         item.pagepermisson = item.pagepermisson === 1 ? 0 : 1
-        if (item.grade === 1) {
-            patchRight(item).then(res => {
-                res.status === 200 && setDataSource([...dataSource])
-            })
-        } else if (item.grade === 2) {
-            patchChildren(item).then(res => {
-                res.status === 200 && setDataSource([...dataSource])
-            })
+        const funcMap = {
+            1: patchRight,
+            2: patchChildren
         }
+        const func = funcMap[item.grade]
+        if (func) {
+            const res = await funcMap[item.grade](item)
+            res.status === 200 && setDataSource([...dataSource])
+        }
+        // if (item.grade === 1) {
+        //     patchRight(item).then(res => {
+        //         res.status === 200 && setDataSource([...dataSource])
+        //     })
+        // } else if (item.grade === 2) {
+        //     patchChildren(item).then(res => {
+        //         res.status === 200 && setDataSource([...dataSource])
+        //     })
+        // }
     }
     useEffect(() => {
         getRights()
@@ -103,7 +113,13 @@ export default function RightList () {
                 </Popconfirm>
                 {/* 编辑 */}
                 <Popover
-                    content={<Switch checked={item.pagepermisson} disabled={item.pagepermisson === undefined} onChange={() => handleChangeSwitch(item)} />}
+                    content={
+                        <Switch
+                            checked={item.pagepermisson}
+                            disabled={item.pagepermisson === undefined}
+                            onChange={() => handleChangeSwitch(item)}
+                        />
+                    }
                     title="页面配置项"
                     trigger="click"
                 >

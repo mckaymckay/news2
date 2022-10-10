@@ -12,9 +12,6 @@ import './NewsSandBox.css'
 // antd
 import { Layout } from 'antd'
 const { Content } = Layout;
-const arr = [
-
-]
 
 export default function NewsSandBox () {
     const [title, setTitle] = useState('')

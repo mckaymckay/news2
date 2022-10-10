@@ -7,7 +7,6 @@ import {
     FileDoneOutlined
 } from '@ant-design/icons';
 import { Layout, Menu } from 'antd';
-import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { withRouter } from 'react-router-dom';
 import { getSideMenu } from '../../service/rights'
@@ -29,7 +28,6 @@ function SideMenu (props) {
     useEffect(() => {
         getSideMenu().then(res => {
             setMenu(res.data)
-            // console.log(32, res.data, selectKey[0])
             let title = {}
             res.data.forEach(item => {
                 if (item.key === selectKey[0]) {
