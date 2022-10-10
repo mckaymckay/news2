@@ -8,7 +8,6 @@ import RoleList from './right-manage/RoleList'
 import RightList from './right-manage/RightList'
 import NoPermission from './nopermission/NoPermission'
 // css
-// import './csses/'
 import './NewsSandBox.css'
 // antd
 import { Layout } from 'antd'

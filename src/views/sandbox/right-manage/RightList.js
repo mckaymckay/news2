@@ -2,6 +2,9 @@ import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { Table, Tag, Button, Space, message, Popconfirm, Popover, Switch } from 'antd';
 import { useEffect, useState } from 'react';
 import { getSideMenu, deleteRight, deleteChildren, patchRight, patchChildren } from '../../../service/rights';
+import './RightList.css'
+import styles from './RightList.css'
+console.log(styles)
 // 操作：删除成功
 const handleConfirm = (e) => {
     console.log(e);
@@ -31,7 +34,7 @@ const columns = [
         title: 'ID',
         dataIndex: 'id',
         render: (id) => {
-            return <div style={{ 'fontWeight': 'bold' }}>{id}</div>
+            return <div className='first-columns'> {id}</div >
         }
     },
     {
